@@ -1,0 +1,20 @@
+# Files to be explicitly treated as textual content
+*.bat           text eol=crlf
+*.sh            text eol=lf
+
+*.txt           text eol=lf
+*.java          text eol=lf diff=java
+*.properties    text eol=lf encoding=ISO-8859-1
+*.xml           text eol=lf
+*.xsd           text eol=lf
+*.html          text eol=lf diff=html
+*.css           text eol=lf
+
+# Non textual files. No eol correction and autodetection will be performed
+*.gif           binary
+*.png           binary
+*.jpg           binary
+*.pdf           binary
+*.psd           binary
+# typical extension for binary data like test or reference data
+*.dat           binary
