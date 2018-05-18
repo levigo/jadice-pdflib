@@ -1,3 +1,4 @@
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,10 +8,10 @@ import com.levigo.jadice.document.io.SeekableInputStream;
 import com.levigo.jadice.format.pdf.internal.DefaultPDFDocumentFactory;
 import com.levigo.jadice.format.pdf.internal.PDFDocument;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
-import com.levigo.jadice.format.pdf.internal.objects.DSNameObject;
 import com.levigo.jadice.format.pdf.internal.objects.DSObject;
 
 public class Example {
+
   public static void main(String[] args) throws Exception {
 
 
@@ -35,23 +36,15 @@ public class Example {
 
       final DSDictionary catalog = document.getCatalog();
 
-      new DSObjectTraversal(document.getResolver()) {
-        @Override
-        public void visitEnter(final DSDictionary dictionary) {
-          System.out.println("<<");
-        }
+      try (final PrintWriter pw = new PrintWriter(System.out)) {
+        new PrintDSObjectTraversal(document.getResolver(), pw, 3).traverse(catalog);
+      }
 
-        @Override
-        public void visitEntry(final DSNameObject key, final DSObject value) {
-          System.out.println("  /" + key.getName() + " " + value);
-        }
 
-        @Override
-        public void visitLeave(final DSDictionary dictionary) {
-          System.out.println(">>");
-        }
-      }.traverse(catalog);
-
+      // access the root page tree node
+      // the Pages node has to be a reference. Due to this, we've got to resolve the reference
+      final DSObject ref = catalog.getNamedEntryValue("Pages");
+      final DSDictionary pageTreeNode = document.getResolver().resolveDictionary(ref);
 
     }
   }
