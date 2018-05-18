@@ -13,7 +13,6 @@ import com.levigo.jadice.document.io.SeekableLookaheadStream;
 import com.levigo.jadice.format.pdf.internal.PDFFilterFactory;
 import com.levigo.jadice.format.pdf.internal.PDFFormatVersionInfo;
 import com.levigo.jadice.format.pdf.internal.crypt.NoSecurityHandler;
-import com.levigo.jadice.format.pdf.internal.msg.StructureMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
 import com.levigo.jadice.format.pdf.internal.objects.DSObject;
 import com.levigo.jadice.format.pdf.internal.objects.DSStream;
@@ -464,7 +463,7 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
 
     t = lexer.getNextToken();
     if (t != PDFDocumentStructureLexer.TOKEN_KEYWORD_XREF)
-      throw new RuntimeException(StructureMessages.NO_XREFTABLE_AT_OFFSET);
+      throw new RuntimeException("specified location does not contain a cross reference table");
 
     long currentObjectNumber = 0;
     while (!isXRefTableEnd(lexer)) {
@@ -486,7 +485,8 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
             break;
           }
 
-          throw new RuntimeException(StructureMessages.XREFT_EITHER_N_OR_F_EXPECTED);
+          throw new RuntimeException(
+              "cross reference table contained illegal content. Either used or free markers are allowed.");
         }
         lexer.getNextToken();
         currentObjectNumber++;
@@ -536,7 +536,7 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
     final Token t = lexer.peekToken(0);
     if (t.isOfType(TokenTypes.TOKEN_TYPE_STRING)) {
       if (t != PDFDocumentStructureLexer.TOKEN_KEYWORD_TRAILER)
-        throw new RuntimeException(StructureMessages.XREFT_CORRUPT);
+        throw new RuntimeException("cross reference table is corrupt");
       return true;
     }
     return false;
@@ -553,7 +553,7 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
     final PDFParser p = new PDFParser(lexer, null, new NoSecurityHandler(), filterFactory);
     final DSObject o = p.parseObject();
     if (!(o instanceof DSStream)) {
-      throw new RuntimeException(StructureMessages.EXPECTED_XREFSTREAM);
+      throw new RuntimeException("expected cross reference stream. Structure is corrupt.");
     }
     final SeekableInputStream xrefStream = filterFactory.getInputStreamFromPDFStream((DSStream) o);
 
@@ -566,7 +566,7 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
     final Subsection[] index = xrefStreamDict.getIndex();
     if (w[1] <= 0)
       // the second field is the only one that never has any default
-      throw new RuntimeException(StructureMessages.XREFS_W_INCORRECT_CONTENT);
+      throw new RuntimeException("incorrect element in W array");
 
     for (final Subsection subsection : index) {
 
@@ -615,7 +615,7 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
         // if this exception is thrown, chances are good, that the /Index is wrong. The first value
         // of each pair is the first object number. The second value is the number of entries, not
         // the total number of objects...
-        throw new RuntimeException(StructureMessages.XREFS_STREAM_CORRUPT);
+        throw new RuntimeException("cross reference stream data corrupted");
 
       segment[0] = asLong(buf);
     }
@@ -625,12 +625,12 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
       // well, this would mean that the PDF file consists of only free object
       // markers... How useful!
       if (segment[0] != 0)
-        throw new RuntimeException(StructureMessages.XREFS_STREAM_CORRUPT);
+        throw new RuntimeException("cross reference stream data corrupted");
     } else {
       final byte[] segment2Buf = new byte[w[1]];
 
       if (readFully(xrefStream, segment2Buf) < 0)
-        throw new RuntimeException(StructureMessages.XREFS_STREAM_CORRUPT);
+        throw new RuntimeException("cross reference stream data corrupted");
 
       segment[1] = asLong(segment2Buf);
     }
@@ -648,7 +648,7 @@ public class PDFDocumentStructureParser extends AbstractParserSupport {
       final byte[] segment3Buf = new byte[w[2]];
 
       if (readFully(xrefStream, segment3Buf) < 0)
-        throw new RuntimeException(StructureMessages.XREFS_STREAM_CORRUPT);
+        throw new RuntimeException("cross reference stream data corrupted");
 
       segment[2] = asLong(segment3Buf);
     }

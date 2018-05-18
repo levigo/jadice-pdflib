@@ -13,8 +13,6 @@ import com.levigo.jadice.format.pdf.crypt.PDFSecurityException;
 import com.levigo.jadice.format.pdf.internal.crypt.NoSecurityHandler;
 import com.levigo.jadice.format.pdf.internal.crypt.SecurityHandler;
 import com.levigo.jadice.format.pdf.internal.crypt.StringDecryptor;
-import com.levigo.jadice.format.pdf.internal.msg.PDFSecurityMessages;
-import com.levigo.jadice.format.pdf.internal.msg.StructureMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSArray;
 import com.levigo.jadice.format.pdf.internal.objects.DSBoolean;
 import com.levigo.jadice.format.pdf.internal.objects.DSCommonDictionary;
@@ -74,7 +72,7 @@ public abstract class AbstractPDFParser extends AbstractParserSupport {
           return stringDecryptor.getDecryptedString(srcString, objectNumber, generationNumber);
         } catch (final PDFSecurityException e) {
           if (LOGGER.isErrorEnabled())
-            LOGGER.error(PDFSecurityMessages.DECRYPTION_OF_STRING_FAILED, e);
+            LOGGER.error("String decryption failed.", e);
 
           return new DSLiteralString(token.getStringToken());
         }
@@ -87,7 +85,7 @@ public abstract class AbstractPDFParser extends AbstractParserSupport {
           return stringDecryptor.getDecryptedString(srcString, objectNumber, generationNumber);
         } catch (final PDFSecurityException e) {
           if (LOGGER.isErrorEnabled())
-            LOGGER.error(PDFSecurityMessages.DECRYPTION_OF_STRING_FAILED, e);
+            LOGGER.error("String decryption failed.", e);
 
           return new DSHexString(token.getStringToken());
         }
@@ -134,7 +132,7 @@ public abstract class AbstractPDFParser extends AbstractParserSupport {
 
     }
 
-    throw new RuntimeException(StructureMessages.UNEXPECTED_TOKEN);
+    throw new RuntimeException("found unexpected syntactical element while reading");
   }
 
   /**

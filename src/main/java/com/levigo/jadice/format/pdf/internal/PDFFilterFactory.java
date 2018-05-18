@@ -25,8 +25,6 @@ import com.levigo.jadice.format.pdf.crypt.PDFSecurityException;
 import com.levigo.jadice.format.pdf.internal.crypt.NoSecurityHandler;
 import com.levigo.jadice.format.pdf.internal.crypt.SecurityHandler;
 import com.levigo.jadice.format.pdf.internal.crypt.StreamDecryptor;
-import com.levigo.jadice.format.pdf.internal.msg.GlobalMessages;
-import com.levigo.jadice.format.pdf.internal.msg.PDFSecurityMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSArray;
 import com.levigo.jadice.format.pdf.internal.objects.DSCommonDictionary;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
@@ -144,7 +142,7 @@ public final class PDFFilterFactory {
           final DSNameObject type = resolver.resolveName(filterEntry.decodeParms, "Type");
 
           if (type != null && !type.matches("CryptFilterDecodeParms"))
-            LOGGER.warn(PDFSecurityMessages.CRYPT_FILTER_DECODE_PARMS_TYPE_MISMATCH);
+            LOGGER.warn("Got crypt filter decode parameters with wrong type.");
 
           cryptFilterName = resolver.resolveName(filterEntry.decodeParms, "Name");
           streamDecryptor = securityHandler.getStreamDecryptor(cryptFilterName);
@@ -160,7 +158,7 @@ public final class PDFFilterFactory {
         }
 
       } catch (PDFSecurityException e) {
-        LOGGER.error(PDFSecurityMessages.DECRYPTION_OF_STREAM_FAILED, e);
+        LOGGER.error("Stream decryption failed.", e);
       }
 
       return sis;
@@ -218,7 +216,8 @@ public final class PDFFilterFactory {
       final int height = resolver.resolveInt(filterEntry.getStreamDictionary(), "Height", "H", -1);
 
       if (width < 0 || height < 0) {
-        LOGGER.error(GlobalMessages.PREDICTION_MISSING_IMAGE_SIZE);
+        LOGGER.error(
+            "image sizes not given but needed for prediction. Predition won't be applied. Image produced may be unexpected");
         return stream;
       }
       return new TIFFPredictorInputStream(stream, 2, colors, bytesPerLine, new Dimension(width, height));
@@ -360,7 +359,7 @@ public final class PDFFilterFactory {
 
       if (filterParameter != null && filterParameter.size() != filters.size()) {
         if (LOGGER.isErrorEnabled()) {
-          LOGGER.error(GlobalMessages.INSUFFICIENT_PARAMETER_COUNT);
+          LOGGER.error("insufficient count of filter parameters, ignoring parameters");
         }
         filterParameter = null;
       }
@@ -483,7 +482,7 @@ public final class PDFFilterFactory {
     } catch (final IOException e1) {
       if (LOGGER.isErrorEnabled()) {
         // FIXME wouldn't an exception be better?
-        LOGGER.error(GlobalMessages.SOURCE_STREAM_RESET, e1);
+        LOGGER.error("unable to reset resource Stream.", e1);
       }
     }
     return buildFilterStreamChain(sis, buildFilterChain(stream.getDictionary()), acceptNonStreamable);

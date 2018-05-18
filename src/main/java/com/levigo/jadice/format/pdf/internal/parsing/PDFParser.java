@@ -11,7 +11,6 @@ import com.levigo.jadice.format.pdf.crypt.PDFSecurityException;
 import com.levigo.jadice.format.pdf.internal.DefaultReferenceResolver;
 import com.levigo.jadice.format.pdf.internal.PDFFilterFactory;
 import com.levigo.jadice.format.pdf.internal.crypt.SecurityHandler;
-import com.levigo.jadice.format.pdf.internal.msg.StructureMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
 import com.levigo.jadice.format.pdf.internal.objects.DSInteger;
 import com.levigo.jadice.format.pdf.internal.objects.DSObject;
@@ -131,7 +130,7 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
       // handle stream data.
 
       if (!(o instanceof DSDictionary)) {
-        throw new RuntimeException(StructureMessages.STREAM_WITHOUT_DICTIONARY);
+        throw new RuntimeException("illegal content: stream object has not dictionary.");
       }
       final DSDictionary dict = (DSDictionary) o;
 
@@ -149,7 +148,8 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
       }
 
       if (whitespaceAfterStream) {
-        LOGGER.warn(StructureMessages.STREAM_KEYWORD_TRAILING_SPACE);
+        LOGGER.warn(
+            "The stream keyword is followed by space character(s). It must be terminated by either CARRIAGE RETURN and LINE FEED, nor a single LINE FEED");
       }
       // end of heuristic for DOCPV-66
 
@@ -159,11 +159,12 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
         if (lexer.read() == '\n') {
           streamBegin += 2;
         } else {
-          LOGGER.warn(StructureMessages.STREAM_KEYWORD_TERMINATED_CR);
+          LOGGER.warn("stream keyword has been terminated with CARRIAGE RETURN without LINE FEED.");
           streamBegin += 1;
         }
       } else {
-        LOGGER.warn(StructureMessages.STREAM_KEYWORD_INCORRECTLY_TERMINATED);
+        LOGGER.warn(
+            "stream keyword has not been terminated by either CARRIAGE RETURN and LINE FEED, nor a single LINE FEED");
       }
 
       // find the stream length
@@ -174,7 +175,7 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
       }
 
       if (len == null) {
-        throw new RuntimeException(StructureMessages.STREAM_LENGTH_MISSING);
+        throw new RuntimeException("missing required length for a stream object.");
       }
 
       if (!(len instanceof DSInteger)) {
@@ -190,16 +191,16 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
 
       try {
         if (!lexer.getNextToken().isOfType(TokenTypesPDF.KEYWORD_ENDSTREAM))
-          LOGGER.warn(StructureMessages.MISSING_ENDSTREAM_KEYWORD);
+          LOGGER.warn("Missing endstream keyword after stream data");
       } catch (final Exception e) {
-        LOGGER.error(StructureMessages.MISSING_ENDSTREAM_KEYWORD, e);
+        LOGGER.error("Missing endstream keyword after stream data", e);
       }
 
       try {
         if (!lexer.getNextToken().isOfType(TokenTypesPDF.KEYWORD_ENDOBJECT))
-          LOGGER.warn(StructureMessages.MISSING_ENDOBJ_KEYWORD, objectNumber, generationNumber);
+          LOGGER.warn("Missing endobj keyword after body of object {0} {1}", objectNumber, generationNumber);
       } catch (final Exception e) {
-        LOGGER.error(StructureMessages.MISSING_ENDOBJ_KEYWORD, objectNumber, generationNumber, e);
+        LOGGER.error("Missing endobj keyword after body of object {0} {1}", objectNumber, generationNumber, e);
       }
 
       final DSStream dsStream = new DSStream(dict,
@@ -209,7 +210,7 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
       return dsStream;
     } else if (!hasObjectStreamContext && !token.isOfType(TokenTypesPDF.KEYWORD_ENDOBJECT)) {
       if (!lexer.getNextToken().isOfType(TokenTypesPDF.KEYWORD_ENDOBJECT))
-        LOGGER.warn(StructureMessages.MISSING_ENDOBJ_KEYWORD, objectNumber, generationNumber);
+        LOGGER.warn("Missing endobj keyword after body of object {0} {1}", objectNumber, generationNumber);
     }
     return o;
   }
@@ -260,7 +261,8 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
           res = parseObject(objectNumber, generationNumber, res, +1);
 
         if (res != null && res.objectNumber() != objectNumber) {
-          LOGGER.warn(StructureMessages.INCORRECT_XREF_TABLE, objectNumber, generationNumber, res.objectNumber(),
+          LOGGER.warn("Incorrectly formulated cross reference table. Found object {2} {3} instead of object {0} {1}",
+              objectNumber, generationNumber, res.objectNumber(),
               res.generationNumber());
         }
       }
@@ -288,7 +290,8 @@ public class PDFParser extends AbstractPDFParser implements IPDFParser {
   private DSObject parseObject(long objectNumber, int generationNumber, DSObject res, int delta) throws IOException {
     Location location;
     if (res != null)
-      LOGGER.warn(StructureMessages.INCORRECT_XREF_TABLE, objectNumber, generationNumber, res.objectNumber(),
+      LOGGER.warn("Incorrectly formulated cross reference table. Found object {2} {3} instead of object {0} {1}",
+          objectNumber, generationNumber, res.objectNumber(),
           res.generationNumber());
 
     location = locator.locate(objectNumber + delta, generationNumber);

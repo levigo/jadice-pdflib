@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.levigo.jadice.format.pdf.internal.msg.GlobalMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSObject;
 import com.levigo.jadice.format.pdf.internal.objects.DSReference;
 import com.levigo.jadice.format.pdf.internal.parsing.PDFParser;
@@ -29,7 +28,7 @@ public class DefaultReferenceResolver implements ReferenceResolver {
           obj = parser.parseObject(ref.getReferencedObjectNumber(), ref.getReferencedGenerationNumber());
         }
       } catch (final IOException e) {
-        LOGGER.error(GlobalMessages.IOEXCEPTION_OBJECT_RESOLVING, e);
+        LOGGER.error("received IOException while trying read PDF structure", e);
         return null;
       }
     }

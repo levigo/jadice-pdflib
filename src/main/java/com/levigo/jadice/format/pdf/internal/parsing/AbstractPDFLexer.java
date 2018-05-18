@@ -12,7 +12,6 @@ import com.levigo.jadice.document.io.ConcurrentSeekableLookaheadStream;
 import com.levigo.jadice.document.io.SeekableInputStream;
 import com.levigo.jadice.document.io.SeekableLookaheadStream;
 import com.levigo.jadice.format.pdf.internal.ArrayQueue;
-import com.levigo.jadice.format.pdf.internal.msg.ContentStreamMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSInteger;
 import com.levigo.jadice.format.pdf.internal.objects.DSLiteralString;
 import com.levigo.jadice.format.pdf.internal.objects.DSNameObject;
@@ -437,7 +436,8 @@ public abstract class AbstractPDFLexer extends Lexer {
       return EOF_TOKEN;
     } else {
       if (LOGGER.isWarnEnabled()) {
-        LOGGER.warn(ContentStreamMessages.ILLEGAL_CONTENT_SEQUENCE, lookaheadStream.getStreamPosition(),
+        LOGGER.warn("illegal content sequence at offset {0}. Hex value of content sequence: 0x{1}",
+            lookaheadStream.getStreamPosition(),
             Integer.toHexString(la));
       }
       return EOF_TOKEN;
@@ -472,7 +472,8 @@ public abstract class AbstractPDFLexer extends Lexer {
         buffer.write(c);
       } else if (!isWhitespace(c)) {
         if (LOGGER.isWarnEnabled()) {
-          LOGGER.warn(ContentStreamMessages.INVALID_CHARACTER, lookaheadStream.getStreamPosition(),
+          LOGGER.warn("invalid character at offset {0}. Hex value of character: 0x{1}",
+              lookaheadStream.getStreamPosition(),
               Integer.toHexString(c));
         }
       }

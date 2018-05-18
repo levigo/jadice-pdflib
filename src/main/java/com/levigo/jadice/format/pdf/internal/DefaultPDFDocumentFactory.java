@@ -6,7 +6,6 @@ import com.levigo.jadice.document.io.SeekableInputStream;
 import com.levigo.jadice.format.pdf.crypt.PDFSecurityException;
 import com.levigo.jadice.format.pdf.internal.crypt.NoSecurityHandler;
 import com.levigo.jadice.format.pdf.internal.crypt.SecurityHandler;
-import com.levigo.jadice.format.pdf.internal.msg.PDFSecurityMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
 import com.levigo.jadice.format.pdf.internal.objects.DSReference;
 import com.levigo.jadice.format.pdf.internal.parsing.CrossReferenceTable;
@@ -50,7 +49,7 @@ public class DefaultPDFDocumentFactory implements PDFDocumentFactory {
     // FIXME the current version of this extracted library doesn't have the decryption support.
     final SecurityHandler securityHandler = new NoSecurityHandler();
     if (!securityHandler.authenticate()) {
-      throw new PDFSecurityException(PDFSecurityMessages.ACCESS_DENIED);
+      throw new PDFSecurityException("Access denied. Document will not be displayed.");
     }
 
 

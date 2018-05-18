@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.levigo.jadice.format.pdf.internal.Utils;
-import com.levigo.jadice.format.pdf.internal.msg.StructureMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSArray;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
 import com.levigo.jadice.format.pdf.internal.objects.DSNumber;
@@ -48,7 +47,7 @@ public class Trailer extends AbstractStructureObject<DSDictionary> {
           };
         } else {
           // something is weird
-          LOGGER.warn(StructureMessages.TRAILER_ID_MALFORMED);
+          LOGGER.warn("found malformed ID entry in the document trailer");
         }
       }
 

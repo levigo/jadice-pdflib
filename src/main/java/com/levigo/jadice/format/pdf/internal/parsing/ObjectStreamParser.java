@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.levigo.jadice.format.pdf.internal.PDFFilterFactory;
 import com.levigo.jadice.format.pdf.internal.crypt.NoSecurityHandler;
-import com.levigo.jadice.format.pdf.internal.msg.StructureMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
 import com.levigo.jadice.format.pdf.internal.objects.DSNumber;
 import com.levigo.jadice.format.pdf.internal.objects.DSObject;
@@ -29,8 +28,8 @@ public class ObjectStreamParser extends AbstractParserSupport {
 
     final DSDictionary dict = objectStream.getDictionary();
 
-    objectCount = getNumber(dict, "N", StructureMessages.OBJSTM_N_MISSING).getInteger();
-    offsetToFirst = getNumber(dict, "First", StructureMessages.OBJSTM_FIRST_MISSING).getInteger();
+    objectCount = getNumber(dict, "N", "the number of objects inside object stream is missing").getInteger();
+    offsetToFirst = getNumber(dict, "First", "the offset to the first object in object stream is missing").getInteger();
 
     objectIndexes = new long[objectCount][];
 

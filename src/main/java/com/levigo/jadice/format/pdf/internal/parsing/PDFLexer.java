@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.levigo.jadice.document.io.SeekableInputStream;
-import com.levigo.jadice.format.pdf.internal.msg.GlobalMessages;
 import com.levigo.jadice.format.ps.internal.Token;
 
 
@@ -52,7 +51,7 @@ public class PDFLexer extends AbstractPDFLexer implements IPDFLexer {
     try {
       return lookaheadStream.getStreamPosition();
     } catch (final IOException e) {
-      LOGGER.error(GlobalMessages.DOCUMENT_STREAM_ACCESS_FAILED, e);
+      LOGGER.error("Failed to access the document stream data", e);
       return -1;
     }
   }
@@ -134,7 +133,7 @@ public class PDFLexer extends AbstractPDFLexer implements IPDFLexer {
       }
     } catch (final IOException e) {
       if (LOGGER.isErrorEnabled()) {
-        LOGGER.warn(GlobalMessages.PDFLexer_131, e);
+        LOGGER.warn("unable to read region completely. region output may be corrupt", e);
       }
       return null;
     }
@@ -142,7 +141,7 @@ public class PDFLexer extends AbstractPDFLexer implements IPDFLexer {
     try {
       seek(savedFilePointer);
     } catch (final IOException e) {
-      LOGGER.error(GlobalMessages.SEEK_IN_DOCUMENT_FAILED, e);
+      LOGGER.error("unable to reset location for reading. file handling may break completely", e);
     }
 
     return rawData;

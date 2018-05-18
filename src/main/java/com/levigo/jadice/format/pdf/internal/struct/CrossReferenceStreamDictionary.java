@@ -1,6 +1,5 @@
 package com.levigo.jadice.format.pdf.internal.struct;
 
-import com.levigo.jadice.format.pdf.internal.msg.StructureMessages;
 import com.levigo.jadice.format.pdf.internal.objects.DSArray;
 import com.levigo.jadice.format.pdf.internal.objects.DSDictionary;
 import com.levigo.jadice.format.pdf.internal.objects.DSInteger;
@@ -59,11 +58,11 @@ public class CrossReferenceStreamDictionary extends Trailer {
     if (indexObject != null) {
 
       if (!(indexObject instanceof DSArray))
-        throw new RuntimeException(StructureMessages.XREFS_INDEX_ARRAY_ERROR);
+        throw new RuntimeException("the index array of a cross reference stream dictionary is incorrect");
 
       final DSArray indexArray = ((DSArray) indexObject);
       if (indexArray.size() % 2 != 0)
-        throw new RuntimeException(StructureMessages.XREFS_INDEX_ARRAY_ERROR);
+        throw new RuntimeException("the index array of a cross reference stream dictionary is incorrect");
 
       final int pairs = indexArray.size() / 2;
 
@@ -75,7 +74,7 @@ public class CrossReferenceStreamDictionary extends Trailer {
         final DSObject count = indexArray.get((i * 2) + 1);
 
         if (startObject == null || !(startObject instanceof DSNumber) || count == null || !(count instanceof DSNumber))
-          throw new RuntimeException(StructureMessages.XREFS_INDEX_ARRAY_ERROR);
+          throw new RuntimeException("the index array of a cross reference stream dictionary is incorrect");
 
         subsections[i] = new Subsection( //
             ((DSNumber) startObject).getLong(), //
@@ -97,10 +96,10 @@ public class CrossReferenceStreamDictionary extends Trailer {
   public int getSize() {
     final DSObject sizeObject = getDictionary().getNamedEntryValue("Size");
     if (sizeObject == null)
-      throw new RuntimeException(StructureMessages.XREFS_SIZE_MISSING);
+      throw new RuntimeException("mandatory 'Size' entry in cross reference stream missing");
 
     if (!(sizeObject instanceof DSNumber))
-      throw new RuntimeException(StructureMessages.XREFS_SIZE_ERROR);
+      throw new RuntimeException("mandatory 'Size' entry in cross reference stream incorrect");
 
     return ((DSNumber) sizeObject).getInteger();
   }
@@ -108,16 +107,15 @@ public class CrossReferenceStreamDictionary extends Trailer {
   public int[] getW() {
     final DSObject e = getDictionary().getNamedEntryValue("W");
     if (!(e instanceof DSArray))
-      throw new RuntimeException(StructureMessages.XREFS_MISSING_W_ARRAY);
+      throw new RuntimeException("the cross reference stream is missing the W array.");
     DSArray wObj = (DSArray) e;
     if (wObj.size() != 3)
       throw new RuntimeException(
           "the size of the W array in the cross reference stream has incorrect length. Expected: 3 Actual: "
               + wObj.size());
 
-    final int[] w = new int[]{requireInt(wObj.get(0), StructureMessages.XREFS_W_INCORRECT_CONTENT),
-        requireInt(wObj.get(1), StructureMessages.XREFS_W_INCORRECT_CONTENT),
-        requireInt(wObj.get(2), StructureMessages.XREFS_W_INCORRECT_CONTENT)
+    final int[] w = new int[]{requireInt(wObj.get(0), "incorrect element in W array"),
+        requireInt(wObj.get(1), "incorrect element in W array"), requireInt(wObj.get(2), "incorrect element in W array")
     };
     return w;
   }
