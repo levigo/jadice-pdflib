@@ -11,11 +11,11 @@ public class DSStream extends DSObject {
   private final IStreamFactory streamFactory;
 
   /**
-   * initializes a <code>PDFStream</code> object, containing a {@link DSDictionary}with all the
-   * stream relevant entries. Don't forget to set the area of the Stream data with
-   * {@link #setDataArea(long, long)}
+   * initializes a {@code DSStream} object, containing a {@link DSDictionary} with all the
+   * stream relevant entries.
    *
-   * @param dictionary the stream relevant dictionary
+   * @param dictionary the dictionary preceding the stream
+   * @param streamFactory {@link IStreamFactory} responsible for the creation of the actual {@link SeekableInputStream}
    */
   public DSStream(DSDictionary dictionary, IStreamFactory streamFactory) {
     this.dictionary = dictionary;
@@ -47,12 +47,4 @@ public class DSStream extends DSObject {
     return false;
   }
 
-  /**
-   * This method is mainly used for the PDF-DocInspector
-   *
-   * @see java.lang.Object#toString()
-   */
-  public String toString() {
-    return "PDFStream";
-  }
 }

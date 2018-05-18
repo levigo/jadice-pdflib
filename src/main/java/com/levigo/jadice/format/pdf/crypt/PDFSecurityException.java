@@ -1,7 +1,7 @@
 package com.levigo.jadice.format.pdf.crypt;
 
 /**
- * represents some kind of unexpected condition during the encryption process of a PDF stream.
+ * represents some kind of unexpected condition during the decryption process of a PDF stream.
  */
 public class PDFSecurityException extends Exception {
 

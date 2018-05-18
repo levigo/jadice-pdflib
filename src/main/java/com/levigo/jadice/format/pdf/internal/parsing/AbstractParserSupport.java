@@ -10,7 +10,7 @@ public abstract class AbstractParserSupport {
 
   protected final void assertTokenType(Token token, long tokenType) {
     if (!token.isOfType(tokenType)) {
-      throw new RuntimeException("found unexpected syntactical element while reading");
+      throw new RuntimeException("unexpected syntactical element encountered.");
     }
   }
 

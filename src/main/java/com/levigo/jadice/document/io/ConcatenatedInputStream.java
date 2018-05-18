@@ -16,8 +16,6 @@ public class ConcatenatedInputStream extends SeekableInputStream {
   /**
    * When reading into byte buffers, try to read at least this number of bytes, if the room in the
    * buffer allows us to do so.
-   * <p>
-   * See https://support.levigo.de/jira/browse/DOCP-447 for reasons for this feature.
    */
   private static final int PREFERRED_MINIMUM_READ_CHUNK = 16;
   private final ArrayList<SeekableInputStream> inputStreams;
